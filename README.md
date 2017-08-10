@@ -2,6 +2,24 @@
 
 -----
 
+I fork this project and fix several bugs.
+All bugs come from when communicate with iframe.
+
+There are two bug when work with iframe:
+1) the url is too large so that can result in package loss.
+2) the url changes too fast can result in package loss as well.
+
+So，I change the core communicate way with `alert`,
+and `prompt` js error to Java so I can handle it, show error page or sth.
+
+Also, this library adds safe WebView into the top level.
+It throws Exception when meeting the incorrect Js injection used `addJavaScriptFunction`.
+
+See more in [Android JsBridge源码分析](http://blog.csdn.net/u014099894/article/details/72673438)
+
+-----
+-----
+
 inspired and modified from [this](https://github.com/jacin1/JsBridge) and wechat jsBridge file, with some bugs fix and feature enhancement.
 
 This project make a bridge between Java and JavaScript.
@@ -10,23 +28,6 @@ It provides safe and convenient way to call Java code from js and call js code f
 
 ## Demo
 ![JsBridge Demo](https://raw.githubusercontent.com/lzyzsd/JsBridge/master/JsBridge.gif)
-
-## Usage
-
-## JitPack.io
-
-I strongly recommend https://jitpack.io
-
-```groovy
-repositories {
-    // ...
-    maven { url "https://jitpack.io" }
-}
-
-dependencies {
-    compile 'com.github.lzyzsd:jsbridge:1.0.4'
-}
-```
 
 ## Use it in Java
 

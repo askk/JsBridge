@@ -31,7 +31,8 @@
         WebViewJavascriptBridge._messageHandler = messageHandler;
         var receivedMessages = receiveMessageQueue;
         receiveMessageQueue = null;
-        for (var i = 0; i < receivedMessages.length; i++) {
+
+        for (var i = 0; receivedMessages && i < receivedMessages.length; i++) {
             _dispatchMessageFromNative(receivedMessages[i]);
         }
     }
@@ -66,17 +67,78 @@
     }
 
     // 提供给native调用,该函数作用:获取sendMessageQueue返回给native,由于android不能直接获取返回的内容,所以使用url shouldOverrideUrlLoading 的方式返回内容
-    function _fetchQueue() {
-        var messageQueueString = JSON.stringify(sendMessageQueue);
-        sendMessageQueue = [];
-        //android can't read directly the return data, so we can reload iframe src to communicate with java
-        messagingIframe.src = CUSTOM_PROTOCOL_SCHEME + '://return/_fetchQueue/' + encodeURIComponent(messageQueueString);
-    }
+    //function _fetchQueue() {
+    //    var messageQueueString = JSON.stringify(sendMessageQueue);
+    //    sendMessageQueue = [];
+    //    //android can't read directly the return data, so we can reload iframe src to communicate with java
+    //    messagingIframe.src = CUSTOM_PROTOCOL_SCHEME + '://return/_fetchQueue/' + encodeURIComponent(messageQueueString);
+    //}
+
+    //function _fetchQueue() {
+    //  var tempQueue = [];
+    //  var tempLength = sendMessageQueue.length;
+    //  for (var i = 0; i < tempLength; i++) {
+    //    tempQueue[i] = sendMessageQueue[i];
+    //  }
+    //  sendMessageQueue.splice(0, tempLength);
+    //  if (tempLength === 0) {
+    //    return;
+    //  }
+    //  if (tempLength <= 3) {
+    //    setTimeout(function() {
+    //      tempQueue = JSON.stringify(tempQueue);
+    //      messagingIframe.src = CUSTOM_PROTOCOL_SCHEME + '://return/_fetchQueue/' + encodeURIComponent(tempQueue);
+    //    }, Math.random() * 100 + 100);
+    //    return;
+    //  }
+    //  for (var i = 0, length = Math.floor(tempLength / 3); i <= length; i++) {
+    //    var execMessageQueue = [];
+    //    if (i < length) {
+    //      execMessageQueue = tempQueue.slice(3 * i, 3 * i + 3);
+    //    } else {
+    //      execMessageQueue = tempQueue.slice(3 * i, tempLength);
+    //    }
+    //    if (execMessageQueue.length === 0) {
+    //      return;
+    //    }
+    //    (function(queue) {
+    //      setTimeout(function() {
+    //        queue = JSON.stringify(queue);
+    //        messagingIframe.src = CUSTOM_PROTOCOL_SCHEME + '://return/_fetchQueue/' + encodeURIComponent(queue);
+    //      }, 200 * (i + 1));
+    //    })(execMessageQueue);
+    //  }
+    //}
+
+     function _fetchQueue() {
+         var messageQueueString = JSON.stringify(sendMessageQueue);
+         sendMessageQueue = [];
+         //android can't read directly the return data, so we can reload iframe src to communicate with java
+         // messagingIframe.src = CUSTOM_PROTOCOL_SCHEME + '://return/_fetchQueue/' + encodeURIComponent(messageQueueString);
+         alert(CUSTOM_PROTOCOL_SCHEME + '://return/_fetchQueue/' + messageQueueString);
+     }
 
     //提供给native使用,
     function _dispatchMessageFromNative(messageJSON) {
         setTimeout(function() {
-            var message = JSON.parse(messageJSON);
+            var done = false;
+            var message = messageJSON;
+            for(var i = 0; i < 5; i++){
+                message = decodeURIComponent(message);
+                try{
+                    message = JSON.parse(message);
+                    done = true;
+                    break;
+                }catch(e){
+                    console.error(e);
+                }
+            }
+            if(!done){
+                prompt('error');
+                return;
+            }
+
+
             var responseCallback;
             //java call finished, now need to call js callback function
             if (message.responseId) {

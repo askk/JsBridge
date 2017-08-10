@@ -1,9 +1,9 @@
 package com.github.lzyzsd.jsbridge;
 
 import android.graphics.Bitmap;
+import android.support.annotation.CallSuper;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
@@ -11,14 +11,13 @@ import java.net.URLDecoder;
  * Created by bruce on 10/28/15.
  */
 public class BridgeWebViewClient extends WebViewClient {
-    private BridgeWebView webView;
+    private final BridgeWebView webView;
 
-    public BridgeWebViewClient(BridgeWebView webView) {
+    protected BridgeWebViewClient(BridgeWebView webView) {
         this.webView = webView;
     }
 
-    @Override
-    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+    @CallSuper @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
         try {
             url = URLDecoder.decode(url, "UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -36,13 +35,11 @@ public class BridgeWebViewClient extends WebViewClient {
         }
     }
 
-    @Override
-    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+    @Override public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
     }
 
-    @Override
-    public void onPageFinished(WebView view, String url) {
+    @CallSuper @Override public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
 
         if (BridgeWebView.toLoadJs != null) {
@@ -58,8 +55,7 @@ public class BridgeWebViewClient extends WebViewClient {
         }
     }
 
-    @Override
-    public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+    @Override public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
         super.onReceivedError(view, errorCode, description, failingUrl);
     }
 }
