@@ -10,7 +10,7 @@ There are two bug when work with iframe:
 2) the url changes too fast can result in package loss as well.
 
 So，I change the core communicate way with `alert`,
-and `prompt` js error to Java so I can handle it, show error page or sth.
+and `prompt` js error to Java so I can handle it with showing error page or sth.
 
 Also, this library adds safe WebView into the top level.
 It throws Exception when meeting the incorrect Js injection used `addJavaScriptFunction`.
